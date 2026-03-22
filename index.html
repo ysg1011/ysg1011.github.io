@@ -28,121 +28,46 @@
         .header p {
             opacity: 0.9;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-        .editor {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .editor input {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            transition: border-color 0.3s;
-        }
-        .editor input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .editor textarea {
-            width: 100%;
-            min-height: 150px;
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            resize: vertical;
-            font-family: inherit;
-            transition: border-color 0.3s;
-        }
-        .editor textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .editor button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 1rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .editor button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-        .notes-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .note-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            animation: fadeIn 0.3s ease;
-            position: relative;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .note-card h3 {
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        .note-card .date {
-            color: #999;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-        }
-        .note-card .content {
-            color: #555;
-            line-height: 1.6;
-            white-space: pre-wrap;
-        }
-        .note-card .actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .note-card .actions button {
-            padding: 0.4rem 1rem;
-            border: none;
+
+        .file-item {
+            background: #161b22;
+            border: 1px solid #30363d;
             border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: background 0.2s;
+            padding: 12px;
+            margin-bottom: 16px;
         }
-        .note-card .actions .edit-btn {
-            background: #e3f2fd;
-            color: #1976d2;
+        .file-title {
+            color: #58a6ff;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .note-card .actions .delete-btn {
-            background: #ffebee;
-            color: #c62828;
+        .file-icon {
+            font-size: 18px;
+            animation: bounce 2s infinite;
         }
-        .note-card .actions button:hover {
-            opacity: 0.8;
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
         }
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #999;
+        pre {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: white;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
         }
+        .loading { color: #8b949e; }
+        .error { color: #f85149; }
+
     </style>
 </head>
 <body>
@@ -150,101 +75,40 @@
         <h1>📝 我的笔记</h1>
         <p>记录思考，分享生活</p>
     </div>
-    <div class="container">
-        <div class="editor">
-            <input type="text" id="titleInput" placeholder="输入标题...">
-            <textarea id="contentInput" placeholder="写下你的想法..."></textarea>
-            <button onclick="addNote()">保存笔记</button>
-        </div>
-        <div class="notes-list" id="notesList"></div>
-    </div>
 
+<div id="files-container"></div>
     <script>
-        let notes = JSON.parse(localStorage.getItem('blogNotes') || '[]');
-        let editingIndex = -1;
-
-        function saveNotes() {
-            localStorage.setItem('blogNotes', JSON.stringify(notes));
-        }
-
-        function formatDate(date) {
-            return new Date(date).toLocaleString('zh-CN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        function renderNotes() {
-            const container = document.getElementById('notesList');
-            if (notes.length === 0) {
-                container.innerHTML = '<div class="empty-state">还没有笔记，开始写下你的第一篇吧！</div>';
-                return;
-            }
-            container.innerHTML = notes.map((note, index) => `
-                <div class="note-card">
-                    <h3>${escapeHtml(note.title)}</h3>
-                    <div class="date">${formatDate(note.date)}</div>
-                    <div class="content">${escapeHtml(note.content)}</div>
-                    <div class="actions">
-                        <button class="edit-btn" onclick="editNote(${index})">编辑</button>
-                        <button class="delete-btn" onclick="deleteNote(${index})">删除</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function addNote() {
-            const title = document.getElementById('titleInput').value.trim();
-            const content = document.getElementById('contentInput').value.trim();
-
-            if (!title && !content) {
-                alert('请输入标题或内容');
-                return;
-            }
-
-            if (editingIndex >= 0) {
-                notes[editingIndex] = { title: title || '无标题', content, date: Date.now() };
-                editingIndex = -1;
-            } else {
-                notes.unshift({ title: title || '无标题', content, date: Date.now() });
-            }
-
-            saveNotes();
-            renderNotes();
-            clearInputs();
-        }
-
-        function editNote(index) {
-            const note = notes[index];
-            document.getElementById('titleInput').value = note.title;
-            document.getElementById('contentInput').value = note.content;
-            editingIndex = index;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function deleteNote(index) {
-            if (confirm('确定要删除这条笔记吗？')) {
-                notes.splice(index, 1);
-                saveNotes();
-                renderNotes();
+        // 配置要显示的文件列表
+        const FILES = [
+            { repo: 'ysg1011/ysg1011.github.io', path: 'README.md' },
+            { repo: 'ysg1011/ysg1011.github.io', path: 'notes.json' }
+        ];
+        async function loadAll() {
+            const container = document.getElementById('files-container');
+            for (const file of FILES) {
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                const icons = ['📄', '📝', '📋', '📑', '📃', '🗎'];
+                const icon = icons[Math.floor(Math.random() * icons.length)];
+                div.innerHTML = `
+                    <div class="file-title"><span class="file-icon">${icon}</span> ${file.repo}/${file.path}</div>
+                    <pre class="loading">加载中...</pre>
+                `;
+                container.appendChild(div);
+                try {
+                    const res = await fetch(`https://api.github.com/repos/${file.repo}/contents/${file.path}`);
+                    if (!res.ok) throw new Error('文件不存在');
+                    const data = await res.json();
+                    const content = decodeURIComponent(escape(atob(data.content)));
+                    div.querySelector('pre').textContent = content;
+                    div.querySelector('pre').classList.remove('loading');
+                } catch (e) {
+                    div.querySelector('pre').textContent = '错误: ' + e.message;
+                    div.querySelector('pre').className = 'error';
+                }
             }
         }
-
-        function clearInputs() {
-            document.getElementById('titleInput').value = '';
-            document.getElementById('contentInput').value = '';
-        }
-
-        renderNotes();
+        loadAll();
     </script>
 </body>
 </html>
