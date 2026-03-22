@@ -72,6 +72,7 @@
         }
         .file-content.show {
             display: block;
+            max-height: none;
         }
         .file-toggle {
             cursor: pointer;
@@ -103,7 +104,6 @@
 
         // 配置要显示的文件列表
         const FILES = [
-            // { repo: 'ysg1011/ysg1011.github.io', path: 'README.md' },
             { repo: 'ysg1011/ysg1011.github.io', path: 'android/android_boot' },
             { repo: 'ysg1011/ysg1011.github.io', path: 'android/Android_Init_Language.md' }
         ];
@@ -124,15 +124,17 @@
                 `;
                 container.appendChild(div);
                 try {
-                    const res = await fetch(`https://api.github.com/repos/${file.repo}/contents/${file.path}`);
+                    // const res = await fetch(`https://api.github.com/repos/${file.repo}/contents/${file.path}`);
+                    const url = `https://raw.githubusercontent.com/${file.repo}/main/${file.path}`; 
+                    const res = await fetch(url); 
                     if (!res.ok) throw new Error('文件不存在');
-                    const data = await res.json();
-                    const content = decodeURIComponent(escape(atob(data.content)));
+                    // const data = await res.json();
+                    // const content = decodeURIComponent(escape(atob(data.content)));
+                    const content = await res.text();
                     div.querySelector('.file-content').textContent = content;
-                    div.querySelector('.file-content').classList.add('show');
                 } catch (e) {
-                    div.querySelector('pre').textContent = '错误: ' + e.message;
-                    div.querySelector('pre').className = 'error';
+                    div.querySelector('.file-content').textContent = '错误: ' + e.message;
+                    div.querySelector('.file-content').classList.add('show');
                 }
             }
         }
