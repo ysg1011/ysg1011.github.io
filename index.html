@@ -11,15 +11,36 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #0d1117;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(88, 166, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+                linear-gradient(180deg, #0d1117 0%, #161b22 100%);
             color: #c9d1d9;
             min-height: 100vh;
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1f35 0%, #0d1117 100%);
+            border-bottom: 1px solid #30363d;
             color: white;
-            padding: 1rem 2rem;
+            padding: 1.5rem 2rem;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: headerGradient 3s ease infinite;
+        }
+        @keyframes headerGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         .header h1 {
             font-size: 1.5rem;
@@ -91,12 +112,7 @@
         .main {
             flex: 1;
             padding: 20px;
-        }
-        .file-item {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 16px;
+            overflow-y: auto;
         }
         .file-title {
             color: #58a6ff;
@@ -106,28 +122,141 @@
             align-items: center;
             gap: 8px;
         }
-        .file-icon {
-            font-size: 18px;
-            animation: bounce 2s infinite;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
-        }
+        .loading { color: #8b949e; }
+        .error { color: #f85149; }
+
+        /* 代码样式 */
         pre {
             background: #0d1117;
             border: 1px solid #30363d;
             border-radius: 6px;
             padding: 16px;
             overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            color: white;
+            color: #e6edf3;
             font-size: 13px;
             line-height: 1.6;
+            font-family: 'SF Mono', Consolas, monospace;
         }
-        .loading { color: #8b949e; }
-        .error { color: #f85149; }
+        code {
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+
+        /* Markdown 渲染样式 */
+        .markdown-body {
+            color: #c9d1d9;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+        .markdown-body > p {
+            margin: 14px 0;
+        }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3,
+        .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+            color: #f0f6fc;
+            margin: 24px 0 12px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .markdown-body h1 { font-size: 1.8em; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
+        .markdown-body h2 { font-size: 1.5em; border-bottom: 1px solid #30363d; padding-bottom: 6px; }
+        .markdown-body h3 { font-size: 1.25em; }
+        .markdown-body h4 { font-size: 1.1em; }
+        .markdown-body > h1:first-child,
+        .markdown-body > h2:first-child,
+        .markdown-body > h3:first-child {
+            margin-top: 0;
+        }
+        .markdown-body a { color: #58a6ff; text-decoration: none; }
+        .markdown-body a:hover { text-decoration: underline; }
+        .markdown-body ul, .markdown-body ol { margin: 12px 0; padding-left: 24px; }
+        .markdown-body li { margin: 6px 0; }
+        .markdown-body li > ul, .markdown-body li > ol { margin: 4px 0; }
+        .markdown-body blockquote {
+            border-left: 4px solid #238636;
+            padding: 8px 16px;
+            margin: 16px 0;
+            color: #8b949e;
+            background: rgba(35, 134, 54, 0.1);
+            border-radius: 0 6px 6px 0;
+        }
+        .markdown-body blockquote p { margin: 0; }
+        .markdown-body table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+            overflow-x: auto;
+            display: block;
+        }
+        .markdown-body th, .markdown-body td {
+            border: 1px solid #30363d;
+            padding: 10px 14px;
+            text-align: left;
+        }
+        .markdown-body th {
+            background: #161b22;
+            color: #f0f6fc;
+            font-weight: 600;
+        }
+        .markdown-body tr:nth-child(even) { background: rgba(22, 27, 34, 0.5); }
+        .markdown-body hr {
+            border: none;
+            border-top: 1px solid #30363d;
+            margin: 24px 0;
+        }
+        .markdown-body img {
+            max-width: 100%;
+            border-radius: 6px;
+            margin: 12px 0;
+        }
+        .markdown-body strong { color: #f0f6fc; font-weight: 600; }
+        .markdown-body em { color: #c9d1d9; }
+        .markdown-body code {
+            background: rgba(110, 118, 129, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+        .markdown-body pre {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+        .markdown-body pre code {
+            background: none;
+            padding: 0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* 代码高亮 */
+        .hljs-keyword { color: #ff7b72; }
+        .hljs-string { color: #a5d6ff; }
+        .hljs-number { color: #79c0ff; }
+        .hljs-comment { color: #8b949e; font-style: italic; }
+        .hljs-function { color: #d2a8ff; }
+        .hljs-title { color: #d2a8ff; }
+        .hljs-params { color: #e6edf3; }
+        .hljs-built_in { color: #ffa657; }
+        .hljs-literal { color: #79c0ff; }
+        .hljs-type { color: #ffa657; }
+        .hljs-attr { color: #79c0ff; }
+        .hljs-selector-tag { color: #7ee787; }
+        .hljs-selector-class { color: #d2a8ff; }
+        .hljs-selector-id { color: #79c0ff; }
+
+        /* 图片显示 */
+        .image-viewer {
+            text-align: center;
+        }
+        .image-viewer img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
     </style>
 </head>
 <body>
@@ -150,10 +279,245 @@
         // 配置要显示的文件列表（修改这里添加文件）
         const FILES = [
             { repo: 'ysg1011/ysg1011.github.io', path: 'android/android_boot' },
-            { repo: 'ysg1011/ysg1011.github.io', path: 'android/Android_Init_Language.md' }
+            { repo: 'ysg1011/ysg1011.github.io', path: 'android/Android_Init_Language.md' },
+            { repo: 'ysg1011/ysg1011.github.io', path: 'linux/memory_manage/内存分配-水线计算.md' }
         ];
 
         const icons = ['📄', '📝', '📋', '📑', '📃', '🗎'];
+
+        // 获取文件类型
+        function getFileType(path) {
+            const ext = path.split('.').pop().toLowerCase();
+            const name = path.toLowerCase();
+
+            if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext)) return 'image';
+            if (ext === 'md') return 'markdown';
+            if (['c', 'h', 'cpp', 'hpp', 'py', 'js', 'ts', 'go', 'rs', 'java', 'kt', 'sh', 'bash', 'makefile', 'mk'].includes(ext)) return 'code';
+            return 'text';
+        }
+
+        // 获取代码语言
+        function getCodeLanguage(path) {
+            const ext = path.split('.').pop().toLowerCase();
+            const map = {
+                'c': 'c', 'h': 'c', 'cpp': 'cpp', 'hpp': 'cpp',
+                'py': 'python', 'js': 'javascript', 'ts': 'typescript',
+                'go': 'go', 'rs': 'rust', 'java': 'java', 'kt': 'kotlin',
+                'sh': 'bash', 'bash': 'bash', 'makefile': 'makefile', 'mk': 'makefile'
+            };
+            return map[ext] || 'text';
+        }
+
+        // 简单 Markdown 转 HTML
+        function parseMarkdown(text) {
+            const lines = text.split('\n');
+            let html = '';
+            let inCodeBlock = false;
+            let inTable = false;
+            let inList = false;
+            let inBlockquote = false;
+            let codeBlockContent = '';
+            let codeBlockLang = '';
+            let tableRows = [];
+            let listItems = [];
+            let blockquoteContent = [];
+            let i = 0;
+
+            while (i < lines.length) {
+                const line = lines[i];
+                const trimmed = line.trim();
+
+                // 代码块开始
+                if (trimmed.startsWith('```')) {
+                    if (!inCodeBlock) {
+                        inCodeBlock = true;
+                        codeBlockLang = trimmed.slice(3).trim();
+                        codeBlockContent = '';
+                    } else {
+                        // 代码块结束
+                        inCodeBlock = false;
+                        html += `<pre><code class="language-${codeBlockLang}">${escapeHtml(codeBlockContent)}</code></pre>`;
+                    }
+                    i++;
+                    continue;
+                }
+
+                if (inCodeBlock) {
+                    codeBlockContent += (codeBlockContent ? '\n' : '') + line;
+                    i++;
+                    continue;
+                }
+
+                // 引用块
+                if (trimmed.startsWith('>')) {
+                    blockquoteContent.push(trimmed.slice(1).trim());
+                    inBlockquote = true;
+                    i++;
+                    continue;
+                } else if (inBlockquote) {
+                    html += `<blockquote>${blockquoteContent.join('<br>')}</blockquote>`;
+                    blockquoteContent = [];
+                    inBlockquote = false;
+                    continue;
+                }
+
+                // 表格
+                if (trimmed.startsWith('|') && !trimmed.includes('---')) {
+                    if (!inTable) {
+                        inTable = true;
+                        tableRows = [];
+                    }
+                    const cells = trimmed.split('|').filter(c => c.trim());
+                    tableRows.push(cells.map(c => c.trim()));
+                    i++;
+                    continue;
+                } else if (trimmed.includes('---') && trimmed.includes('|')) {
+                    // 表格分隔行，跳过
+                    i++;
+                    continue;
+                } else if (inTable) {
+                    // 表格结束，生成 HTML
+                    if (tableRows.length > 0) {
+                        html += '<table><thead><tr>';
+                        tableRows[0].forEach(h => html += `<th>${h}</th>`);
+                        html += '</tr></thead><tbody>';
+                        for (let j = 1; j < tableRows.length; j++) {
+                            html += '<tr>';
+                            tableRows[j].forEach(c => html += `<td>${c}</td>`);
+                            html += '</tr>';
+                        }
+                        html += '</tbody></table>';
+                    }
+                    tableRows = [];
+                    inTable = false;
+                    continue;
+                }
+
+                // 无序列表
+                if (trimmed.startsWith('- ')) {
+                    if (!inList) {
+                        inList = true;
+                        listItems = [];
+                    }
+                    listItems.push(trimmed.slice(2));
+                    i++;
+                    continue;
+                }
+                // 有序列表
+                else if (/^\d+\.\s/.test(trimmed)) {
+                    if (!inList) {
+                        inList = true;
+                        listItems = [];
+                    }
+                    listItems.push(trimmed.replace(/^\d+\.\s/, ''));
+                    i++;
+                    continue;
+                }
+                else if (inList) {
+                    // 列表结束
+                    html += '<ul>' + listItems.map(item => `<li>${item}</li>`).join('') + '</ul>';
+                    listItems = [];
+                    inList = false;
+                    continue;
+                }
+
+                // 水平线
+                if (/^---+$/.test(trimmed)) {
+                    html += '<hr>';
+                    i++;
+                    continue;
+                }
+
+                // 标题
+                if (trimmed.startsWith('### ')) {
+                    html += `<h3>${escapeHtml(trimmed.slice(4))}</h3>`;
+                } else if (trimmed.startsWith('## ')) {
+                    html += `<h2>${escapeHtml(trimmed.slice(3))}</h2>`;
+                } else if (trimmed.startsWith('# ')) {
+                    html += `<h1>${escapeHtml(trimmed.slice(2))}</h1>`;
+                } else if (trimmed) {
+                    // 普通段落 - 处理行内格式
+                    let p = line
+                        .replace(/`([^`]+)`/g, '<code>$1</code>')
+                        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+                        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+
+                    if (p.trim()) {
+                        html += `<p>${p}</p>`;
+                    }
+                }
+
+                i++;
+            }
+
+            // 处理剩余内容
+            if (inTable && tableRows.length > 0) {
+                html += '<table><thead><tr>';
+                tableRows[0].forEach(h => html += `<th>${h}</th>`);
+                html += '</tr></thead><tbody>';
+                for (let j = 1; j < tableRows.length; j++) {
+                    html += '<tr>';
+                    tableRows[j].forEach(c => html += `<td>${c}</td>`);
+                    html += '</tr>';
+                }
+                html += '</tbody></table>';
+            }
+
+            if (inList && listItems.length > 0) {
+                html += '<ul>' + listItems.map(item => `<li>${item}</li>`).join('') + '</ul>';
+            }
+
+            if (inBlockquote && blockquoteContent.length > 0) {
+                html += `<blockquote>${blockquoteContent.join('<br>')}</blockquote>`;
+            }
+
+            return `<div class="markdown-body">${html}</div>`;
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        // 简单语法高亮
+        function highlightCode(code, language) {
+            const keywords = {
+                c: ['int', 'void', 'char', 'float', 'double', 'if', 'else', 'for', 'while', 'return', 'struct', 'enum', 'typedef', 'static', 'const', 'unsigned', 'long', 'short', 'case', 'switch', 'break', 'continue', 'default', 'do', 'goto', 'sizeof', 'union', 'volatile', 'extern', 'register', 'signed'],
+                python: ['def', 'class', 'if', 'elif', 'else', 'for', 'while', 'return', 'import', 'from', 'as', 'try', 'except', 'finally', 'with', 'pass', 'break', 'continue', 'lambda', 'yield', 'global', 'nonlocal', 'raise', 'assert', 'del', 'in', 'is', 'not', 'and', 'or', 'True', 'False', 'None'],
+                javascript: ['function', 'var', 'let', 'const', 'if', 'else', 'for', 'while', 'return', 'class', 'extends', 'new', 'this', 'import', 'export', 'default', 'try', 'catch', 'finally', 'throw', 'async', 'await', 'true', 'false', 'null', 'undefined'],
+                go: ['func', 'package', 'import', 'var', 'const', 'type', 'struct', 'interface', 'if', 'else', 'for', 'range', 'return', 'go', 'chan', 'select', 'defer', 'true', 'false', 'nil'],
+                rust: ['fn', 'let', 'mut', 'const', 'static', 'if', 'else', 'match', 'for', 'while', 'loop', 'return', 'struct', 'enum', 'impl', 'trait', 'pub', 'use', 'mod', 'crate', 'self', 'super', 'true', 'false'],
+                bash: ['if', 'then', 'else', 'elif', 'fi', 'for', 'do', 'done', 'while', 'case', 'esac', 'function', 'return', 'echo', 'export', 'source', 'cd', 'ls', 'mkdir', 'rm', 'cp', 'mv', 'cat', 'grep', 'sed', 'awk']
+            };
+
+            let highlighted = code
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            // 字符串
+            highlighted = highlighted.replace(/(["'`])(?:(?!\1)[^\\]|\\.)*\1/g, '<span class="hljs-string">$&</span>');
+
+            // 注释
+            highlighted = highlighted.replace(/(\/\/.*$)/gm, '<span class="hljs-comment">$1</span>');
+            highlighted = highlighted.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="hljs-comment">$1</span>');
+            highlighted = highlighted.replace(/(#.*$)/gm, '<span class="hljs-comment">$1</span>');
+
+            // 数字
+            highlighted = highlighted.replace(/\b(\d+\.?\d*)\b/g, '<span class="hljs-number">$1</span>');
+
+            // 关键字
+            if (keywords[language]) {
+                const kw = keywords[language].join('|');
+                highlighted = highlighted.replace(new RegExp(`\\b(${kw})\\b`, 'g'), '<span class="hljs-keyword">$1</span>');
+            }
+
+            return highlighted;
+        }
 
         // 按目录分组
         function groupByFolder(files) {
@@ -215,27 +579,61 @@
             const file = FILES[index];
             const container = document.getElementById('file-content');
             const icon = icons[index % icons.length];
+            const fileType = getFileType(file.path);
 
             container.innerHTML = `
-                <div class="file-item">
-                    <div class="file-title">
-                        <span class="file-icon">${icon}</span>
-                        ${file.repo}/${file.path}
-                    </div>
-                    <pre class="loading">加载中...</pre>
+                <div class="file-title">
+                    <span class="file-icon">${icon}</span>
+                    ${file.path}
                 </div>
+                <div class="loading">加载中...</div>
             `;
 
             try {
                 const url = `https://raw.githubusercontent.com/${file.repo}/main/${file.path}`;
                 const res = await fetch(url);
                 if (!res.ok) throw new Error('文件不存在');
+
                 const content = await res.text();
-                container.querySelector('pre').textContent = content;
-                container.querySelector('pre').classList.remove('loading');
+
+                if (fileType === 'image') {
+                    container.innerHTML = `
+                        <div class="file-title">
+                            <span class="file-icon">${icon}</span>
+                            ${file.path}
+                        </div>
+                        <div class="image-viewer">
+                            <img src="${url}" alt="${file.path}" onerror="this.parentElement.innerHTML='<p class=error>图片加载失败</p>'">
+                        </div>
+                    `;
+                } else if (fileType === 'markdown') {
+                    container.innerHTML = `
+                        <div class="file-title">
+                            <span class="file-icon">${icon}</span>
+                            ${file.path}
+                        </div>
+                        ${parseMarkdown(content)}
+                    `;
+                } else if (fileType === 'code') {
+                    const lang = getCodeLanguage(file.path);
+                    container.innerHTML = `
+                        <div class="file-title">
+                            <span class="file-icon">${icon}</span>
+                            ${file.path}
+                        </div>
+                        <pre><code>${highlightCode(content, lang)}</code></pre>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="file-title">
+                            <span class="file-icon">${icon}</span>
+                            ${file.path}
+                        </div>
+                        <pre>${content}</pre>
+                    `;
+                }
             } catch (e) {
-                container.querySelector('pre').textContent = '错误: ' + e.message;
-                container.querySelector('pre').className = 'error';
+                container.innerHTML += `<div class="error">错误: ${e.message}</div>`;
             }
         }
 
