@@ -67,6 +67,18 @@
         }
         .loading { color: #8b949e; }
         .error { color: #f85149; }
+        .file-content {
+            display: none;
+        }
+        .file-content.show {
+            display: block;
+        }
+        .file-toggle {
+            cursor: pointer;
+            color: #58a6ff;
+            font-size: 12px;
+            margin-left: 8px;
+        }
 
     </style>
 </head>
@@ -78,6 +90,17 @@
 
 <div id="files-container"></div>
     <script>
+        function toggleContent(btn) {
+            const content = btn.parentElement.nextElementSibling;
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                btn.textContent = '[折叠]';
+            } else {
+                content.style.display = 'none';
+                btn.textContent = '[展开]';
+            }
+        }
+
         // 配置要显示的文件列表
         const FILES = [
             { repo: 'ysg1011/ysg1011.github.io', path: 'android/android_boot' },
@@ -91,8 +114,12 @@
                 const icons = ['📄', '📝', '📋', '📑', '📃', '🗎'];
                 const icon = icons[Math.floor(Math.random() * icons.length)];
                 div.innerHTML = `
-                    <div class="file-title"><span class="file-icon">${icon}</span> ${file.repo}/${file.path}</div>
-                    <pre class="loading">加载中...</pre>
+                    <div class="file-title">
+                        <span class="file-icon">${icon}</span>
+                        ${file.repo}/${file.path}
+                        <span class="file-toggle" onclick="toggleContent(this)">[展开]</span>
+                    </div>
+                    <pre class="file-content">加载中...</pre>
                 `;
                 container.appendChild(div);
                 try {
@@ -100,8 +127,8 @@
                     if (!res.ok) throw new Error('文件不存在');
                     const data = await res.json();
                     const content = decodeURIComponent(escape(atob(data.content)));
-                    div.querySelector('pre').textContent = content;
-                    div.querySelector('pre').classList.remove('loading');
+                    div.querySelector('.file-content').textContent = content;
+                    div.querySelector('.file-content').classList.add('show');
                 } catch (e) {
                     div.querySelector('pre').textContent = '错误: ' + e.message;
                     div.querySelector('pre').className = 'error';
