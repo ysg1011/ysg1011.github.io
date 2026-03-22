@@ -36,7 +36,7 @@
         }
         /* 左侧文件列表 */
         .sidebar {
-            width: 200px;
+            width: 250px;
             background: #161b22;
             border-right: 1px solid #30363d;
             padding: 16px;
@@ -48,14 +48,36 @@
             margin-bottom: 12px;
             text-transform: uppercase;
         }
+        .folder {
+            margin-bottom: 8px;
+        }
+        .folder-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            color: #58a6ff;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .folder-header:hover {
+            background: #30363d;
+        }
+        .folder-files {
+            padding-left: 8px;
+        }
+        .folder-files.collapsed {
+            display: none;
+        }
         .file-link {
             display: block;
-            padding: 8px 12px;
+            padding: 6px 12px;
             color: #c9d1d9;
             text-decoration: none;
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 13px;
-            margin-bottom: 4px;
+            margin: 2px 0;
             cursor: pointer;
         }
         .file-link:hover {
@@ -68,11 +90,7 @@
         /* 右侧内容 */
         .main {
             flex: 1;
-            padding: 20px 40px;
-        }
-        .content-wrapper {
-            max-width: 100%;
-            width: 100%;
+            padding: 20px;
         }
         .file-item {
             background: #161b22;
@@ -124,14 +142,12 @@
             <div id="file-list"></div>
         </div>
         <div class="main">
-            <div class="content-wrapper">
-                <div id="file-content"></div>
-            </div>
+            <div id="file-content"></div>
         </div>
     </div>
 
     <script>
-        // 配置要显示的文件列表
+        // 配置要显示的文件列表（修改这里添加文件）
         const FILES = [
             { repo: 'ysg1011/ysg1011.github.io', path: 'android/android_boot' },
             { repo: 'ysg1011/ysg1011.github.io', path: 'android/Android_Init_Language.md' }
@@ -139,19 +155,59 @@
 
         const icons = ['📄', '📝', '📋', '📑', '📃', '🗎'];
 
+        // 按目录分组
+        function groupByFolder(files) {
+            const groups = {};
+            for (const file of files) {
+                const parts = file.path.split('/');
+                const folder = parts.length > 1 ? parts[0] : '根目录';
+                if (!groups[folder]) groups[folder] = [];
+                groups[folder].push(file);
+            }
+            return groups;
+        }
+
         // 渲染左侧文件列表
         function renderFileList() {
             const list = document.getElementById('file-list');
-            list.innerHTML = FILES.map((file, i) => {
-                const icon = icons[i % icons.length];
-                const name = file.path.split('/').pop();
-                return `<div class="file-link ${i === 0 ? 'active' : ''}" onclick="showFile(${i})">${icon} ${name}</div>`;
-            }).join('');
+            const groups = groupByFolder(FILES);
+
+            let html = '';
+            const folderNames = Object.keys(groups).sort();
+
+            for (const folder of folderNames) {
+                const files = groups[folder];
+                html += `<div class="folder">`;
+                if (folder !== '根目录') {
+                    html += `<div class="folder-header" onclick="toggleFolder(this)">📁 ${folder} <span style="color:#8b949e;font-size:11px">▼</span></div>`;
+                    html += `<div class="folder-files">`;
+                }
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const name = file.path.split('/').pop();
+                    const icon = icons[i % icons.length];
+                    const idx = FILES.indexOf(file);
+                    html += `<div class="file-link" onclick="showFile(${idx})">${icon} ${name}</div>`;
+                }
+                if (folder !== '根目录') {
+                    html += `</div>`;
+                }
+                html += `</div>`;
+            }
+
+            list.innerHTML = html;
+        }
+
+        function toggleFolder(el) {
+            const files = el.nextElementSibling;
+            files.classList.toggle('collapsed');
+            const arrow = el.querySelector('span');
+            arrow.textContent = files.classList.contains('collapsed') ? '▶' : '▼';
         }
 
         // 显示指定文件
         async function showFile(index) {
-            // 更新左侧选中状态
+            // 更新选中状态
             document.querySelectorAll('.file-link').forEach((el, i) => {
                 el.classList.toggle('active', i === index);
             });
