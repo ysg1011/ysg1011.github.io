@@ -233,15 +233,7 @@ KASAN 用来检测**越界**和**释放后使用**，
 
 &#x9;   KASAN的原理是利用额外的内存标记可用内存的状态。这部分额外的内存被称作shadow memory（影子区）。KASAN将1/8的内存用作shadow memory。使用特殊的magic num填充shadow memory，在每一次load/store（load/store检查指令由编译器插入）内存的时候检测对应的shadow memory确定操作是否valid。连续8 bytes内存（8 bytes align）使用1 byte shadow memory标记。如果8 bytes内存都可以访问，则shadow memory的值为0；如果连续N(1 =< N <= 7) bytes可以访问，则shadow memory的值为N；如果8 bytes内存访问都是invalid，则shadow memory的值为负数。
 
-<<<<<<< HEAD
-![KASAN_shadow_memory](./images/KASAN_shadow_memory.png)
-
-![](http://www.wowotech.net/content/uploadfile/201802/4a471518360139.png)
-=======
-![](https://github.com/ysg1011/ysg1011.github.io/blob/main/images/KASAN_shadow_memory.png?raw=true)
->>>>>>> 1da1ac8 (upload)
-
-
+<img src="https://github.com/ysg1011/ysg1011.github.io/blob/main/images/KASAN_shadow_memory.png?raw=true" style="zoom:100%;" />
 
 ###### Software Tag-Based KASAN
 
