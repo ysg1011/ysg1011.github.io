@@ -17,6 +17,16 @@
                 linear-gradient(180deg, #0d1117 0%, #161b22 100%);
             color: #c9d1d9;
             min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* 允许文本内容被选择 */
+        .markdown-body {
+            -webkit-user-select: text;
+            user-select: text;
         }
         .header {
             background: linear-gradient(135deg, #1a1f35 0%, #0d1117 100%);
@@ -75,6 +85,56 @@
             background: rgba(0,0,0,0.5);
             z-index: 99;
         }
+        /* 设置按钮和面板 */
+        .settings-btn {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #30363d;
+            border: none;
+            color: #8b949e;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+        .settings-btn:hover { color: #c9d1d9; }
+        .settings-panel {
+            display: none;
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px 16px;
+        }
+        .settings-panel.show { display: block; }
+        .settings-panel label { color: #c9d1d9; font-size: 13px; }
+        .settings-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .settings-row input {
+            flex: 1;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+        }
+        .settings-row input:focus { border-color: #58a6ff; }
+        .settings-row button {
+            background: #238636;
+            border: none;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .settings-row button:hover { background: #2ea043; }
 
         .container {
             display: flex;
@@ -96,6 +156,7 @@
             font-size: 12px;
             margin-bottom: 12px;
             text-transform: uppercase;
+            padding: 0 8px;
         }
         .folder {
             margin-bottom: 8px;
@@ -128,6 +189,9 @@
             font-size: 13px;
             margin: 2px 0;
             cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .file-link:hover {
             background: #30363d;
@@ -149,6 +213,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
         .loading { color: #8b949e; }
         .error { color: #f85149; }
@@ -210,10 +276,11 @@
         .markdown-body blockquote p { margin: 0; }
         .markdown-body table {
             border-collapse: collapse;
-            width: 100%;
             margin: 16px 0;
-            overflow-x: auto;
             display: block;
+            overflow-x: auto;
+            max-width: 100%;
+            -webkit-overflow-scrolling: touch;
         }
         .markdown-body th, .markdown-body td {
             border: 1px solid #30363d;
@@ -292,19 +359,28 @@
                 display: block;
             }
             .header {
-                padding: 1rem 1rem 1rem 3.5rem;
+                padding: 0.8rem 0.8rem 0.8rem 3rem;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 101;
+                height: 60px;
             }
             .container {
                 flex-direction: column;
+                padding-top: 60px; /* 给固定header留出空间 */
+                min-height: 100vh;
             }
             .sidebar {
                 position: fixed;
-                top: 0;
+                top: 60px;
                 left: 0;
                 bottom: 0;
                 width: 260px;
                 transform: translateX(-100%);
-                padding-top: 60px;
+                padding-top: 16px;
+                z-index: 100;
             }
             .sidebar.open {
                 transform: translateX(0);
@@ -313,10 +389,11 @@
                 display: block;
             }
             .main {
-                padding: 16px;
+                padding: 12px;
+                margin-top: 0;
             }
             .markdown-body {
-                font-size: 13px;
+                font-size: 14px;
             }
             .markdown-body h1 { font-size: 1.4em; }
             .markdown-body h2 { font-size: 1.25em; }
@@ -327,67 +404,141 @@
             }
             .markdown-body table {
                 font-size: 12px;
+                display: table;
+                width: auto;
+                min-width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
             .markdown-body th, .markdown-body td {
-                padding: 8px 10px;
+                padding: 6px 8px;
+                white-space: nowrap;
             }
         }
 
         /* 响应式 - 手机 */
         @media (max-width: 480px) {
             .header h1 {
-                font-size: 1.1rem;
+                font-size: 1rem;
+                margin-bottom: 0.2rem;
             }
             .header p {
                 font-size: 0.7rem;
             }
+            .menu-toggle {
+                left: 0.5rem;
+                padding: 6px 8px;
+                font-size: 1rem;
+            }
+            .settings-btn {
+                right: 0.5rem;
+                padding: 6px 8px;
+                font-size: 1rem;
+            }
+            .header {
+                padding: 0.6rem 0.6rem 0.6rem 2.5rem;
+                height: 55px;
+            }
+            .container {
+                padding-top: 55px;
+            }
+            .sidebar {
+                top: 55px;
+                width: 85%;
+                max-width: 280px;
+            }
             .main {
-                padding: 12px;
+                padding: 8px;
             }
             .file-title {
                 font-size: 12px;
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 4px;
+                margin-bottom: 8px;
             }
             .markdown-body {
-                font-size: 13px;
+                font-size: 14px;
                 line-height: 1.6;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
             .markdown-body > p {
                 margin: 10px 0;
+                word-break: break-word;
             }
             .markdown-body h1, .markdown-body h2, .markdown-body h3 {
                 margin: 16px 0 8px;
+                word-break: break-word;
+            }
+            .markdown-body h1 {
+                font-size: 1.3em;
+                line-height: 1.3;
+            }
+            .markdown-body h2 {
+                font-size: 1.2em;
+                line-height: 1.3;
+            }
+            .markdown-body h3 {
+                font-size: 1.1em;
+                line-height: 1.3;
             }
             .markdown-body ul, .markdown-body ol {
-                padding-left: 18px;
+                padding-left: 16px;
                 margin: 8px 0;
             }
             .markdown-body li {
                 margin: 4px 0;
             }
             .markdown-body blockquote {
-                padding: 6px 12px;
+                padding: 6px 10px;
                 margin: 12px 0;
             }
             .markdown-body code {
                 font-size: 0.85em;
+                word-break: break-all;
             }
             pre {
-                padding: 10px;
+                padding: 8px;
                 font-size: 11px;
                 border-radius: 4px;
-            }
-            .sidebar {
-                width: 220px;
+                overflow-x: auto;
             }
             .folder-header {
                 font-size: 12px;
+                padding: 5px 6px;
             }
             .file-link {
                 font-size: 12px;
-                padding: 5px 10px;
+                padding: 4px 8px;
+                word-break: break-all;
+            }
+            .markdown-body table {
+                font-size: 11px;
+            }
+            .markdown-body th, .markdown-body td {
+                padding: 4px 6px;
+                word-break: break-word;
+            }
+        }
+
+        /* 响应式 - 极小的手机屏幕 */
+        @media (max-width: 360px) {
+            .header h1 {
+                font-size: 0.9rem;
+            }
+            .header p {
+                font-size: 0.65rem;
+            }
+            .markdown-body {
+                font-size: 13px;
+            }
+            .markdown-body h1 { font-size: 1.2em; }
+            .markdown-body h2 { font-size: 1.1em; }
+            .markdown-body h3 { font-size: 1em; }
+            pre {
+                font-size: 10px;
+                padding: 6px;
             }
         }
     </style>
@@ -397,8 +548,17 @@
         <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
         <h1>📝 我的笔记</h1>
         <p>记录思考，分享生活</p>
+        <button class="settings-btn" onclick="toggleSettings()" title="设置 Token">⚙</button>
     </div>
     <div class="menu-overlay" onclick="toggleSidebar()"></div>
+    <div class="settings-panel" id="settings-panel">
+        <label>GitHub Token <span style="opacity:0.5">(解决 API 限流)</span></label>
+        <div class="settings-row">
+            <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxx">
+            <button onclick="saveToken()">保存</button>
+        </div>
+        <div id="token-status" style="font-size:12px;margin-top:6px;opacity:0.7"></div>
+    </div>
 
     <div class="container">
         <div class="sidebar" id="sidebar">
@@ -411,14 +571,77 @@
     </div>
 
     <script>
-        // 配置要显示的文件列表（修改这里添加文件）
-        const FILES = [
-            { repo: 'ysg1011/ysg1011.github.io', path: 'android/android_boot' },
-            { repo: 'ysg1011/ysg1011.github.io', path: 'android/Android_Init_Language.md' },
-            { repo: 'ysg1011/ysg1011.github.io', path: 'linux/memory_manage/内存分配-水线计算.md' }
+        // 配置仓库信息
+        const REPO = 'ysg1011/ysg1011.github.io';
+        const BRANCH = 'main';
+
+        // 需要排除的文件/目录
+        const EXCLUDE_PATTERNS = [
+            'index.html', 'README.md', 'LICENSE',
+            '.git', '.github', 'CNAME', '_config.yml', 'Gemfile',
+            'images'
         ];
 
+        let FILES = [];
         const icons = ['📄', '📝', '📋', '📑', '📃', '🗎'];
+
+        // GitHub Token 管理
+        function getToken() { return localStorage.getItem('gh_token') || ''; }
+        function setToken(t) { localStorage.setItem('gh_token', t); }
+
+        function ghHeaders() {
+            const h = { 'Accept': 'application/vnd.github.v3+json' };
+            const t = getToken();
+            if (t) h['Authorization'] = 'token ' + t;
+            return h;
+        }
+
+        // 判断是否为排除项
+        function isExcluded(path) {
+            return EXCLUDE_PATTERNS.some(ex =>
+                path === ex || path.startsWith(ex + '/')
+            );
+        }
+
+        // 方案1: 用 Trees API 获取全部文件（需 token 解决限流）
+        async function fetchViaTreesAPI() {
+            const url = `https://api.github.com/repos/${REPO}/git/trees/${BRANCH}?recursive=1`;
+            const res = await fetch(url, { headers: ghHeaders() });
+            if (!res.ok) throw new Error('Trees API 失败: ' + res.status);
+            const data = await res.json();
+            return data.tree
+                .filter(item => item.type === 'blob' && !isExcluded(item.path))
+                .map(item => ({ repo: REPO, path: item.path }));
+        }
+
+        // 方案2: 递归 Contents API（每层单独请求）
+        async function fetchViaContentsAPI(path) {
+            const url = `https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
+            const res = await fetch(url, { headers: ghHeaders() });
+            if (!res.ok) throw new Error('Contents API 失败: ' + res.status);
+            const items = await res.json();
+            let files = [];
+            for (const item of items) {
+                if (isExcluded(item.path)) continue;
+                if (item.type === 'file') {
+                    files.push({ repo: REPO, path: item.path });
+                } else if (item.type === 'dir') {
+                    const sub = await fetchViaContentsAPI(item.path);
+                    files = files.concat(sub);
+                }
+            }
+            return files;
+        }
+
+        // 主获取函数：先 Trees API，失败回退 Contents API
+        async function fetchAllFiles() {
+            try {
+                return await fetchViaTreesAPI();
+            } catch (e) {
+                console.warn('Trees API 失败，回退到 Contents API:', e);
+                return await fetchViaContentsAPI('');
+            }
+        }
 
         // 获取文件类型
         function getFileType(path) {
@@ -654,47 +877,72 @@
             return highlighted;
         }
 
-        // 按目录分组
-        function groupByFolder(files) {
-            const groups = {};
+        // 构建目录树结构
+        function buildTree(files) {
+            const root = { folders: {}, files: [] };
             for (const file of files) {
                 const parts = file.path.split('/');
-                const folder = parts.length > 1 ? parts[0] : '根目录';
-                if (!groups[folder]) groups[folder] = [];
-                groups[folder].push(file);
+                let node = root;
+                for (let i = 0; i < parts.length - 1; i++) {
+                    if (!node.folders[parts[i]]) {
+                        node.folders[parts[i]] = { folders: {}, files: [] };
+                    }
+                    node = node.folders[parts[i]];
+                }
+                node.files.push({ name: parts[parts.length - 1], file });
             }
-            return groups;
+            return root;
+        }
+
+        // 递归渲染目录树节点
+        function renderTreeNode(node, depth) {
+            let html = '';
+            const padding = depth > 0 ? 'padding-left: ' + (depth * 8) + 'px' : '';
+
+            // 渲染子目录
+            const folderNames = Object.keys(node.folders).sort();
+            for (const name of folderNames) {
+                html += `<div class="folder" style="${padding}">`;
+                html += `<div class="folder-header" onclick="toggleFolder(this)">📁 ${name} <span style="color:#8b949e;font-size:11px">▼</span></div>`;
+                html += `<div class="folder-files">`;
+                html += renderTreeNode(node.folders[name], depth + 1);
+                html += `</div></div>`;
+            }
+
+            // 渲染文件
+            for (let i = 0; i < node.files.length; i++) {
+                const { name, file } = node.files[i];
+                const icon = getFileIcon(name);
+                const idx = FILES.indexOf(file);
+                html += `<div class="file-link" style="${padding}" data-index="${idx}">${icon} ${name}</div>`;
+            }
+
+            return html;
+        }
+
+        // 根据文件名获取图标
+        function getFileIcon(name) {
+            const ext = name.split('.').pop().toLowerCase();
+            if (ext === 'md') return '📝';
+            if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext)) return '🖼';
+            if (['c', 'h', 'cpp', 'hpp', 'py', 'js', 'ts', 'go', 'rs', 'java', 'kt'].includes(ext)) return '💻';
+            if (['sh', 'bash'].includes(ext)) return '⚙';
+            return '📄';
         }
 
         // 渲染左侧文件列表
         function renderFileList() {
             const list = document.getElementById('file-list');
-            const groups = groupByFolder(FILES);
+            const tree = buildTree(FILES);
 
-            let html = '';
-            const folderNames = Object.keys(groups).sort();
+            list.innerHTML = renderTreeNode(tree, 0);
 
-            for (const folder of folderNames) {
-                const files = groups[folder];
-                html += `<div class="folder">`;
-                if (folder !== '根目录') {
-                    html += `<div class="folder-header" onclick="toggleFolder(this)">📁 ${folder} <span style="color:#8b949e;font-size:11px">▼</span></div>`;
-                    html += `<div class="folder-files">`;
-                }
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    const name = file.path.split('/').pop();
-                    const icon = icons[i % icons.length];
-                    const idx = FILES.indexOf(file);
-                    html += `<div class="file-link" onclick="showFile(${idx})">${icon} ${name}</div>`;
-                }
-                if (folder !== '根目录') {
-                    html += `</div>`;
-                }
-                html += `</div>`;
-            }
-
-            list.innerHTML = html;
+            // 绑定点击事件
+            list.querySelectorAll('.file-link').forEach(el => {
+                el.addEventListener('click', function() {
+                    debouncedShowFile(parseInt(this.dataset.index));
+                });
+            });
         }
 
         function toggleFolder(el) {
@@ -704,15 +952,38 @@
             arrow.textContent = files.classList.contains('collapsed') ? '▶' : '▼';
         }
 
+        // 设置面板
+        function toggleSettings() {
+            document.getElementById('settings-panel').classList.toggle('show');
+        }
+        function saveToken() {
+            const t = document.getElementById('token-input').value.trim();
+            setToken(t);
+            const s = document.getElementById('token-status');
+            s.textContent = t ? 'Token 已保存，刷新页面生效' : 'Token 已清除';
+            setTimeout(() => { s.textContent = ''; }, 3000);
+        }
+        // 初始化 token 输入框
+        if (getToken()) {
+            document.getElementById('token-input').value = getToken();
+        }
+
         // 移动端侧边栏切换
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.querySelector('.menu-overlay');
             sidebar.classList.toggle('open');
             overlay.classList.toggle('show');
+
+            // 阻止body滚动
+            if (sidebar.classList.contains('open')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
         }
 
-        // 点击文件后自动关闭侧边栏（移动端）
+        // 点击文件后自动关闭侧边栏（移动端）- 包装 showFile
         const originalShowFile = showFile;
         showFile = async function(index) {
             await originalShowFile(index);
@@ -721,11 +992,36 @@
             }
         };
 
+        // 触摸滑动关闭侧边栏
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            const sidebar = document.getElementById('sidebar');
+
+            // 如果侧边栏打开且用户向右滑动超过50px，关闭侧边栏
+            if (sidebar.classList.contains('open') && touchEndX - touchStartX > 50) {
+                toggleSidebar();
+            }
+        });
+
+        // 点击遮罩层关闭侧边栏
+        document.querySelector('.menu-overlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                toggleSidebar();
+            }
+        });
+
         // 显示指定文件
         async function showFile(index) {
             // 更新选中状态
-            document.querySelectorAll('.file-link').forEach((el, i) => {
-                el.classList.toggle('active', i === index);
+            document.querySelectorAll('.file-link').forEach(el => {
+                el.classList.toggle('active', parseInt(el.dataset.index) === index);
             });
 
             const file = FILES[index];
@@ -789,9 +1085,48 @@
             }
         }
 
-        // 初始化
-        renderFileList();
-        showFile(0);
+        // 防抖处理，避免重复点击
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // 优化点击事件 - 使用 window.showFile 以支持移动端包装
+        const debouncedShowFile = debounce((...args) => window.showFile(...args), 200);
+
+        // 监听窗口大小变化，适配不同的屏幕尺寸
+        window.addEventListener('resize', debounce(function() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth > 768 && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                document.querySelector('.menu-overlay').classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        }, 250));
+
+        // 初始化 - 动态加载文件列表
+        (async function init() {
+            const container = document.getElementById('file-content');
+            container.innerHTML = '<div class="loading">正在加载文件列表...</div>';
+            try {
+                FILES = await fetchAllFiles();
+                renderFileList();
+                if (FILES.length > 0) {
+                    debouncedShowFile(0);
+                } else {
+                    container.innerHTML = '<div class="loading">仓库中没有找到文件</div>';
+                }
+            } catch (e) {
+                container.innerHTML = `<div class="error">加载文件列表失败: ${e.message}</div>`;
+            }
+        })();
     </script>
 </body>
 </html>
