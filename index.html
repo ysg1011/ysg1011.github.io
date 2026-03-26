@@ -179,35 +179,7 @@
         }
         .sidebar-close:hover { color: #c9d1d9; background: #30363d; }
 
-        /* 树形目录 */
-        :root { --tree-indent: 16px; --tree-leaf-extra: 20px; }
-        .tree-node { position: relative; }
-        .tree-branch {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 5px 8px;
-            cursor: pointer;
-            border-radius: 4px;
-            color: #c9d1d9;
-            font-size: 13px;
-            user-select: none;
-            min-height: 32px;
-        }
-        .tree-branch:hover { background: #30363d; }
-        .tree-arrow {
-            color: #8b949e;
-            font-size: 10px;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: transform 0.15s;
-            border-radius: 4px;
-        }
-        .tree-arrow:hover { background: #21262d; }
+        /* 文件目录 */
         .tree-icon { flex-shrink: 0; font-size: 14px; }
         .tree-label {
             flex: 1;
@@ -223,8 +195,6 @@
             border-radius: 10px;
             flex-shrink: 0;
         }
-        .tree-children { }
-        .tree-children.collapsed { display: none; }
         .tree-leaf {
             display: flex;
             align-items: center;
@@ -244,6 +214,10 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+        .dir-parent { color: #8b949e; font-style: italic; }
+        .dir-parent:hover { color: #c9d1d9; }
+        .dir-folder { color: #58a6ff; font-weight: 500; }
+        .dir-folder:hover { color: #79c0ff; }
         /* 右侧内容 */
         .main {
             flex: 1;
@@ -405,9 +379,81 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
 
+        /* 内容大纲 TOC */
+        .toc-panel {
+            padding: 0;
+        }
+        .toc-title {
+            color: #8b949e;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            padding: 0 8px;
+        }
+        .toc-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: 1px solid #30363d;
+            color: #8b949e;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            width: 100%;
+            justify-content: center;
+        }
+        .toc-back:hover { color: #c9d1d9; border-color: #58a6ff; }
+        .toc-item {
+            display: block;
+            padding: 4px 8px 4px 12px;
+            color: #8b949e;
+            font-size: 13px;
+            text-decoration: none;
+            border-left: 2px solid transparent;
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            border-radius: 0 4px 4px 0;
+            line-height: 1.5;
+        }
+        .toc-item:hover {
+            color: #c9d1d9;
+            background: #21262d;
+        }
+        .toc-item.active {
+            color: #58a6ff;
+            border-left-color: #58a6ff;
+            background: rgba(88, 166, 255, 0.08);
+        }
+        .toc-item[data-level="1"] { padding-left: 12px; font-weight: 600; color: #c9d1d9; }
+        .toc-item[data-level="2"] { padding-left: 24px; }
+        .toc-item[data-level="3"] { padding-left: 36px; font-size: 12px; }
+        .toc-item[data-level="4"] { padding-left: 48px; font-size: 12px; color: #6e7681; }
+        .toc-item[data-level="5"] { padding-left: 60px; font-size: 11px; color: #6e7681; }
+        .toc-item[data-level="6"] { padding-left: 72px; font-size: 11px; color: #484f58; }
+
+        /* Markdown 主内容优化 */
+        .main {
+            scroll-behavior: smooth;
+        }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3,
+        .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+            scroll-margin-top: 20px;
+        }
+        .markdown-body h1:target, .markdown-body h2:target, .markdown-body h3:target,
+        .markdown-body h4:target, .markdown-body h5:target, .markdown-body h6:target {
+            background: rgba(88, 166, 255, 0.1);
+            border-radius: 4px;
+            padding-left: 8px;
+            margin-left: -8px;
+        }
+
         /* 响应式 - 平板及以下 */
         @media (max-width: 768px) {
-            :root { --tree-indent: 12px; --tree-leaf-extra: 14px; }
             .menu-toggle {
                 display: block;
             }
@@ -467,10 +513,6 @@
                 padding: 6px 8px;
                 white-space: nowrap;
             }
-            .tree-branch {
-                font-size: 13px;
-                padding: 6px 6px;
-            }
             .tree-leaf {
                 font-size: 13px;
                 padding: 5px 6px;
@@ -481,11 +523,16 @@
             .sidebar-title { font-size: 11px; margin-bottom: 8px; position: sticky; top: 0; background: #161b22; z-index: 1; padding-top: 4px; padding-bottom: 8px; }
             .sidebar { touch-action: pan-y; }
             .sidebar-close { display: block; }
+            .toc-item { font-size: 12px; padding: 5px 8px 5px 10px; }
+            .toc-item[data-level="2"] { padding-left: 20px; }
+            .toc-item[data-level="3"] { padding-left: 30px; }
+            .toc-item[data-level="4"] { padding-left: 40px; }
+            .toc-item[data-level="5"] { padding-left: 50px; }
+            .toc-item[data-level="6"] { padding-left: 60px; }
         }
 
         /* 响应式 - 手机 */
         @media (max-width: 480px) {
-            :root { --tree-indent: 8px; --tree-leaf-extra: 10px; }
             .header h1 {
                 font-size: 1rem;
                 margin-bottom: 0.2rem;
@@ -577,10 +624,6 @@
                 border-radius: 4px;
                 overflow-x: auto;
             }
-            .tree-branch {
-                font-size: 12px;
-                padding: 5px 6px;
-            }
             .tree-leaf {
                 font-size: 12px;
                 padding: 4px 4px;
@@ -604,7 +647,6 @@
 
         /* 响应式 - 极小的手机屏幕 */
         @media (max-width: 360px) {
-            :root { --tree-indent: 6px; --tree-leaf-extra: 8px; }
             .header h1 {
                 font-size: 0.9rem;
             }
@@ -621,10 +663,6 @@
                 font-size: 10px;
                 padding: 6px;
             }
-            .tree-branch {
-                font-size: 12px;
-                padding: 5px 4px;
-            }
             .tree-leaf {
                 font-size: 12px;
                 padding: 4px 4px;
@@ -636,10 +674,10 @@
 </head>
 <body>
     <div class="header">
-        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <button class="menu-toggle" onclick="toggleSidebar()" aria-label="打开菜单">☰</button>
         <h1>📝 我的笔记</h1>
         <p>记录思考，分享生活</p>
-        <button class="settings-btn" onclick="toggleSettings()" title="设置 Token">⚙</button>
+        <button class="settings-btn" onclick="toggleSettings()" title="设置 Token" aria-label="设置">⚙</button>
     </div>
     <div class="menu-overlay" onclick="toggleSidebar()"></div>
     <div class="settings-panel" id="settings-panel">
@@ -652,12 +690,13 @@
     </div>
 
     <div class="container">
-        <div class="sidebar" id="sidebar">
+        <div class="sidebar" id="sidebar" role="navigation" aria-label="文件目录">
             <div class="sidebar-title">
-                <span>文件目录</span>
-                <button class="sidebar-close" onclick="toggleSidebar()" title="关闭">✕</button>
+                <span id="sidebar-title-text">文件目录</span>
+                <button class="sidebar-close" onclick="toggleSidebar()" title="关闭" aria-label="关闭菜单">✕</button>
             </div>
             <div id="file-list"></div>
+            <div id="toc-panel" class="toc-panel" style="display:none"></div>
         </div>
         <div class="main">
             <div id="file-content"></div>
@@ -677,6 +716,7 @@
         ];
 
         let FILES = [];
+        let currentPath = '';
         const icons = ['📄', '📝', '📋', '📑', '📃', '🗎'];
 
         // GitHub Token 管理
@@ -740,10 +780,12 @@
         // 获取文件类型
         function getFileType(path) {
             const ext = path.split('.').pop().toLowerCase();
-            const name = path.toLowerCase();
+            const name = path.split('/').pop().toLowerCase();
+            const codeFiles = ['makefile', 'dockerfile', 'rakefile', 'gemfile', 'procfile', 'cmakelists.txt'];
 
             if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext)) return 'image';
             if (ext === 'md') return 'markdown';
+            if (codeFiles.includes(name)) return 'code';
             if (['c', 'h', 'cpp', 'hpp', 'py', 'js', 'ts', 'go', 'rs', 'java', 'kt', 'sh', 'bash', 'makefile', 'mk'].includes(ext)) return 'code';
             return 'text';
         }
@@ -751,6 +793,12 @@
         // 获取代码语言
         function getCodeLanguage(path) {
             const ext = path.split('.').pop().toLowerCase();
+            const name = path.split('/').pop().toLowerCase();
+            const nameMap = {
+                'makefile': 'makefile', 'dockerfile': 'dockerfile',
+                'rakefile': 'ruby', 'gemfile': 'ruby', 'cmakelists.txt': 'cmake'
+            };
+            if (nameMap[name]) return nameMap[name];
             const map = {
                 'c': 'c', 'h': 'c', 'cpp': 'cpp', 'hpp': 'cpp',
                 'py': 'python', 'js': 'javascript', 'ts': 'typescript',
@@ -767,12 +815,14 @@
             let inCodeBlock = false;
             let inTable = false;
             let inList = false;
+            let isOrderedList = false;
             let inBlockquote = false;
             let codeBlockContent = '';
             let codeBlockLang = '';
             let tableRows = [];
             let listItems = [];
             let blockquoteContent = [];
+            let headings = [];
             let i = 0;
 
             while (i < lines.length) {
@@ -807,7 +857,7 @@
                     i++;
                     continue;
                 } else if (inBlockquote) {
-                    html += `<blockquote>${blockquoteContent.join('<br>')}</blockquote>`;
+                    html += `<blockquote>${applyInlineFormatting(blockquoteContent.join('<br>'))}</blockquote>`;
                     blockquoteContent = [];
                     inBlockquote = false;
                     continue;
@@ -831,11 +881,11 @@
                     // 表格结束，生成 HTML
                     if (tableRows.length > 0) {
                         html += '<table><thead><tr>';
-                        tableRows[0].forEach(h => html += `<th>${h}</th>`);
+                        tableRows[0].forEach(h => html += `<th>${applyInlineFormatting(h)}</th>`);
                         html += '</tr></thead><tbody>';
                         for (let j = 1; j < tableRows.length; j++) {
                             html += '<tr>';
-                            tableRows[j].forEach(c => html += `<td>${c}</td>`);
+                            tableRows[j].forEach(c => html += `<td>${applyInlineFormatting(c)}</td>`);
                             html += '</tr>';
                         }
                         html += '</tbody></table>';
@@ -849,6 +899,7 @@
                 if (trimmed.startsWith('- ')) {
                     if (!inList) {
                         inList = true;
+                        isOrderedList = false;
                         listItems = [];
                     }
                     listItems.push(trimmed.slice(2));
@@ -859,6 +910,7 @@
                 else if (/^\d+\.\s/.test(trimmed)) {
                     if (!inList) {
                         inList = true;
+                        isOrderedList = true;
                         listItems = [];
                     }
                     listItems.push(trimmed.replace(/^\d+\.\s/, ''));
@@ -867,7 +919,8 @@
                 }
                 else if (inList) {
                     // 列表结束
-                    html += '<ul>' + listItems.map(item => `<li>${item}</li>`).join('') + '</ul>';
+                    const tag = isOrderedList ? 'ol' : 'ul';
+                    html += `<${tag}>` + listItems.map(item => `<li>${applyInlineFormatting(item)}</li>`).join('') + `</${tag}>`;
                     listItems = [];
                     inList = false;
                     continue;
@@ -880,21 +933,40 @@
                     continue;
                 }
 
-                // 标题
-                if (trimmed.startsWith('### ')) {
-                    html += `<h3>${escapeHtml(trimmed.slice(4))}</h3>`;
+                // 标题（从长到短匹配，避免 #### 被 ### 截获）
+                if (trimmed.startsWith('###### ')) {
+                    const text = trimmed.slice(7);
+                    const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '');
+                    headings.push({ level: 6, text, id });
+                    html += `<h6 id="${id}">${escapeHtml(text)}</h6>`;
+                } else if (trimmed.startsWith('##### ')) {
+                    const text = trimmed.slice(6);
+                    const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '');
+                    headings.push({ level: 5, text, id });
+                    html += `<h5 id="${id}">${escapeHtml(text)}</h5>`;
+                } else if (trimmed.startsWith('#### ')) {
+                    const text = trimmed.slice(5);
+                    const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '');
+                    headings.push({ level: 4, text, id });
+                    html += `<h4 id="${id}">${escapeHtml(text)}</h4>`;
+                } else if (trimmed.startsWith('### ')) {
+                    const text = trimmed.slice(4);
+                    const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '');
+                    headings.push({ level: 3, text, id });
+                    html += `<h3 id="${id}">${escapeHtml(text)}</h3>`;
                 } else if (trimmed.startsWith('## ')) {
-                    html += `<h2>${escapeHtml(trimmed.slice(3))}</h2>`;
+                    const text = trimmed.slice(3);
+                    const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '');
+                    headings.push({ level: 2, text, id });
+                    html += `<h2 id="${id}">${escapeHtml(text)}</h2>`;
                 } else if (trimmed.startsWith('# ')) {
-                    html += `<h1>${escapeHtml(trimmed.slice(2))}</h1>`;
+                    const text = trimmed.slice(2);
+                    const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '');
+                    headings.push({ level: 1, text, id });
+                    html += `<h1 id="${id}">${escapeHtml(text)}</h1>`;
                 } else if (trimmed) {
                     // 普通段落 - 处理行内格式
-                    let p = line
-                        .replace(/`([^`]+)`/g, '<code>$1</code>')
-                        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-                        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
-                        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+                    let p = applyInlineFormatting(line);
 
                     if (p.trim()) {
                         html += `<p>${p}</p>`;
@@ -907,25 +979,29 @@
             // 处理剩余内容
             if (inTable && tableRows.length > 0) {
                 html += '<table><thead><tr>';
-                tableRows[0].forEach(h => html += `<th>${h}</th>`);
+                tableRows[0].forEach(h => html += `<th>${applyInlineFormatting(h)}</th>`);
                 html += '</tr></thead><tbody>';
                 for (let j = 1; j < tableRows.length; j++) {
                     html += '<tr>';
-                    tableRows[j].forEach(c => html += `<td>${c}</td>`);
+                    tableRows[j].forEach(c => html += `<td>${applyInlineFormatting(c)}</td>`);
                     html += '</tr>';
                 }
                 html += '</tbody></table>';
             }
 
             if (inList && listItems.length > 0) {
-                html += '<ul>' + listItems.map(item => `<li>${item}</li>`).join('') + '</ul>';
+                const tag = isOrderedList ? 'ol' : 'ul';
+                html += `<${tag}>` + listItems.map(item => `<li>${item}</li>`).join('') + `</${tag}>`;
             }
 
             if (inBlockquote && blockquoteContent.length > 0) {
-                html += `<blockquote>${blockquoteContent.join('<br>')}</blockquote>`;
+                html += `<blockquote>${applyInlineFormatting(blockquoteContent.join('<br>'))}</blockquote>`;
             }
 
-            return `<div class="markdown-body">${html}</div>`;
+            return {
+                html: `<div class="markdown-body">${html}</div>`,
+                headings
+            };
         }
 
         function escapeHtml(text) {
@@ -933,6 +1009,21 @@
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
+        }
+
+        // 行内格式处理（供段落、引用、表格单元格共用）
+        function applyInlineFormatting(text) {
+            return text
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                .replace(/__([^_]+)__/g, '<strong>$1</strong>')
+                .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                .replace(/_([^_]+)_/g, '<em>$1</em>')
+                .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">')
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
+                    if (/^javascript:/i.test(url)) return label;
+                    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+                });
         }
 
         // 简单语法高亮
@@ -971,97 +1062,98 @@
             return highlighted;
         }
 
-        // 构建目录树结构
-        function buildTree(files) {
-            const root = { folders: {}, files: [] };
-            for (const file of files) {
-                const parts = file.path.split('/');
-                let node = root;
-                for (let i = 0; i < parts.length - 1; i++) {
-                    if (!node.folders[parts[i]]) {
-                        node.folders[parts[i]] = { folders: {}, files: [] };
-                    }
-                    node = node.folders[parts[i]];
-                }
-                node.files.push({ name: parts[parts.length - 1], file });
-            }
-            return root;
-        }
-
-        // 统计目录下的文件总数
-        function countFiles(node) {
-            let n = node.files.length;
-            for (const k of Object.keys(node.folders)) {
-                n += countFiles(node.folders[k]);
-            }
-            return n;
-        }
-
-        // 递归渲染目录树节点
-        function renderTreeNode(node, depth) {
-            let html = '';
-            const indent = depth;
-
-            // 渲染子目录
-            const folderNames = Object.keys(node.folders).sort();
-            for (const name of folderNames) {
-                const child = node.folders[name];
-                const cnt = countFiles(child);
-                html += `<div class="tree-node" style="padding-left:calc(${indent} * var(--tree-indent))">`;
-                html += `<div class="tree-branch" onclick="toggleFolder(this)">`;
-                html += `<span class="tree-arrow">▶</span>`;
-                html += `<span class="tree-icon"> </span>`;
-                html += `<span class="tree-label">${name}</span>`;
-                html += `<span class="tree-count">${cnt}</span>`;
-                html += `</div>`;
-                html += `<div class="tree-children collapsed">`;
-                html += renderTreeNode(child, depth + 1);
-                html += `</div></div>`;
-            }
-
-            // 渲染文件
-            for (const { name, file } of node.files) {
-                const icon = getFileIcon(name);
-                const idx = FILES.indexOf(file);
-                html += `<div class="tree-leaf" style="padding-left:calc(${indent} * var(--tree-indent) + var(--tree-leaf-extra))" data-index="${idx}">`;
-                html += `<span class="tree-icon">${icon}</span>`;
-                html += `<span class="tree-label">${name}</span>`;
-                html += `</div>`;
-            }
-
-            return html;
-        }
-
         // 根据文件名获取图标
         function getFileIcon(name) {
             const ext = name.split('.').pop().toLowerCase();
+            const base = name.toLowerCase();
             if (ext === 'md') return '📝';
             if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext)) return '🖼';
+            if (['makefile', 'dockerfile', 'rakefile', 'gemfile', 'cmakelists.txt'].includes(base)) return '💻';
             if (['c', 'h', 'cpp', 'hpp', 'py', 'js', 'ts', 'go', 'rs', 'java', 'kt'].includes(ext)) return '💻';
             if (['sh', 'bash'].includes(ext)) return '⚙';
             return '📄';
         }
 
-        // 渲染左侧文件列表
+        // 进入子目录
+        function navigateTo(folderName) {
+            currentPath = currentPath ? currentPath + '/' + folderName : folderName;
+            renderFileList();
+        }
+
+        // 返回上一级
+        function navigateUp() {
+            const parts = currentPath.split('/');
+            parts.pop();
+            currentPath = parts.join('/');
+            renderFileList();
+        }
+
+        // 渲染左侧文件列表（层级浏览模式）
         function renderFileList() {
             const list = document.getElementById('file-list');
-            const tree = buildTree(FILES);
+            let html = '';
 
-            list.innerHTML = renderTreeNode(tree, 0);
+            // 返回上一级
+            if (currentPath) {
+                html += `<div class="tree-leaf dir-parent" onclick="navigateUp()">`;
+                html += `<span class="tree-icon"> </span>`;
+                html += `<span class="tree-label">..  返回上一级</span>`;
+                html += `</div>`;
+            }
+
+            // 收集当前目录下的文件夹和文件
+            const prefix = currentPath ? currentPath + '/' : '';
+            const folders = new Map();
+            const files = [];
+
+            for (let i = 0; i < FILES.length; i++) {
+                const path = FILES[i].path;
+                if (!path.startsWith(prefix)) continue;
+                const rest = path.slice(prefix.length);
+                const slashIdx = rest.indexOf('/');
+
+                if (slashIdx !== -1) {
+                    const folderName = rest.slice(0, slashIdx);
+                    if (!folders.has(folderName)) {
+                        folders.set(folderName, 0);
+                    }
+                    folders.set(folderName, folders.get(folderName) + 1);
+                } else {
+                    files.push({ name: rest, index: i });
+                }
+            }
+
+            // 渲染文件夹（排在前面）
+            for (const [name, count] of [...folders.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+                const escaped = escapeHtml(name).replace(/'/g, '&#39;');
+                html += `<div class="tree-leaf dir-folder" onclick="navigateTo('${escaped}')">`;
+                html += `<span class="tree-icon"> </span>`;
+                html += `<span class="tree-label">${escapeHtml(name)}/</span>`;
+                html += `<span class="tree-count">${count}</span>`;
+                html += `</div>`;
+            }
+
+            // 渲染文件
+            for (const { name, index } of files) {
+                const icon = getFileIcon(name);
+                html += `<div class="tree-leaf" data-index="${index}">`;
+                html += `<span class="tree-icon">${icon}</span>`;
+                html += `<span class="tree-label">${escapeHtml(name)}</span>`;
+                html += `</div>`;
+            }
+
+            list.innerHTML = html;
 
             // 绑定文件点击事件
-            list.querySelectorAll('.tree-leaf').forEach(el => {
+            list.querySelectorAll('.tree-leaf[data-index]').forEach(el => {
                 el.addEventListener('click', function() {
                     debouncedShowFile(parseInt(this.dataset.index));
                 });
             });
-        }
 
-        function toggleFolder(el) {
-            const children = el.nextElementSibling;
-            const arrow = el.querySelector('.tree-arrow');
-            children.classList.toggle('collapsed');
-            arrow.textContent = children.classList.contains('collapsed') ? '▶' : '▼';
+            // 更新侧边栏标题
+            const titleText = document.getElementById('sidebar-title-text');
+            titleText.textContent = currentPath || '文件目录';
         }
 
         // 设置面板
@@ -1183,7 +1275,15 @@
 
                 const content = await res.text();
 
+                // 非 md 文件恢复文件树
+                const fileList = document.getElementById('file-list');
+                const tocPanel = document.getElementById('toc-panel');
+                const titleText = document.getElementById('sidebar-title-text');
+
                 if (fileType === 'image') {
+                    fileList.style.display = '';
+                    tocPanel.style.display = 'none';
+                    titleText.textContent = '文件目录';
                     container.innerHTML = `
                         <div class="file-title">
                             <span class="file-icon">${icon}</span>
@@ -1194,14 +1294,35 @@
                         </div>
                     `;
                 } else if (fileType === 'markdown') {
+                    const { html, headings } = parseMarkdown(content);
                     container.innerHTML = `
                         <div class="file-title">
                             <span class="file-icon">${icon}</span>
                             ${file.path}
                         </div>
-                        ${parseMarkdown(content)}
+                        ${html}
                     `;
+                    // 渲染 TOC
+                    if (headings.length > 0) {
+                        titleText.textContent = '内容大纲';
+                        fileList.style.display = 'none';
+                        tocPanel.style.display = '';
+                        let tocHtml = `<button class="toc-back" onclick="restoreFileList()">← 返回文件目录</button>`;
+                        tocHtml += `<div class="toc-title">内容大纲</div>`;
+                        headings.forEach(h => {
+                            tocHtml += `<a class="toc-item" data-level="${h.level}" data-id="${h.id}" onclick="scrollToHeading('${h.id}')">${escapeHtml(h.text)}</a>`;
+                        });
+                        tocPanel.innerHTML = tocHtml;
+                        setupScrollSpy();
+                    } else {
+                        fileList.style.display = '';
+                        tocPanel.style.display = 'none';
+                        titleText.textContent = '文件目录';
+                    }
                 } else if (fileType === 'code') {
+                    fileList.style.display = '';
+                    tocPanel.style.display = 'none';
+                    titleText.textContent = '文件目录';
                     const lang = getCodeLanguage(file.path);
                     container.innerHTML = `
                         <div class="file-title">
@@ -1211,17 +1332,67 @@
                         <pre><code>${highlightCode(content, lang)}</code></pre>
                     `;
                 } else {
+                    fileList.style.display = '';
+                    tocPanel.style.display = 'none';
+                    titleText.textContent = '文件目录';
                     container.innerHTML = `
                         <div class="file-title">
                             <span class="file-icon">${icon}</span>
                             ${file.path}
                         </div>
-                        <pre>${content}</pre>
+                        <pre>${escapeHtml(content)}</pre>
                     `;
                 }
             } catch (e) {
-                container.innerHTML += `<div class="error">错误: ${e.message}</div>`;
+                container.innerHTML += `<div class="error">错误: ${escapeHtml(e.message)}</div>`;
             }
+        }
+
+        // 恢复文件目录显示
+        function restoreFileList() {
+            document.getElementById('file-list').style.display = '';
+            document.getElementById('toc-panel').style.display = 'none';
+            document.getElementById('sidebar-title-text').textContent = '文件目录';
+        }
+
+        // 滚动到指定标题
+        let scrollSpyObserver = null;
+        function scrollToHeading(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // 移动端关闭侧边栏
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('open');
+                }
+            }
+        }
+
+        // 滚动监听，高亮当前 TOC 项
+        function setupScrollSpy() {
+            if (scrollSpyObserver) scrollSpyObserver.disconnect();
+            const tocItems = document.querySelectorAll('.toc-item[data-id]');
+            if (!tocItems.length) return;
+
+            const headingIds = Array.from(tocItems).map(el => el.dataset.id);
+            const headings = headingIds.map(id => document.getElementById(id)).filter(Boolean);
+            if (!headings.length) return;
+
+            scrollSpyObserver = new IntersectionObserver(entries => {
+                // 找到第一个可见的标题
+                let activeId = null;
+                for (const h of headings) {
+                    const rect = h.getBoundingClientRect();
+                    if (rect.top <= 40) {
+                        activeId = h.id;
+                    }
+                }
+                tocItems.forEach(el => {
+                    el.classList.toggle('active', el.dataset.id === activeId);
+                });
+            }, { rootMargin: '-10px 0px -80% 0px', threshold: 0 });
+
+            headings.forEach(h => scrollSpyObserver.observe(h));
         }
 
         // 防抖处理，避免重复点击
