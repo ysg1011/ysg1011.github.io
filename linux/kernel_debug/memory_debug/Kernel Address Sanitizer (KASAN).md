@@ -20,7 +20,7 @@ KASAN 用来检测**越界**和**释放后使用**，
 
 内核地址清理器（KASAN）是一种动态内存安全错误检测器，用来检测**越界**`out-of-bounds`和**释放后使用**`use-after-free`的错误
 
-##### KASAN 三种模式
+### KASAN 三种模式
 
 1.  **通用 KASAN** (GCC 8.3.0+)
 
@@ -44,7 +44,7 @@ KASAN 用来检测**越界**和**释放后使用**，
     >
     > 补充对比图表
 
-##### 启用CONFIG方法
+### 启用CONFIG方法
 
 基础配置 `CONFIG_KASAN=y` ， `CONFIG_KASAN_GENERIC` 启用通用 KASAN， `CONFIG_KASAN_SW_TAGS` 启用软件 Tag KASAN,  `CONFIG_KASAN_HW_TAGS` 启用硬件 Tag KASAN。
 
@@ -56,7 +56,7 @@ KASAN 用来检测**越界**和**释放后使用**，
 
 `CONFIG_KASAN_EXTRA_INFO` ：报告更多信息，目前包括分配和释放的CPU和时间戳
 
-##### 启动参数
+### 启动参数
 
 \- `panic_on_warn=1` ：会在打印错误报告后触发内核 panic。
 
@@ -90,7 +90,7 @@ KASAN 用来检测**越界**和**释放后使用**，
 
 \- `kasan.page_alloc.sample.order=<最小页阶数>` 指定受采样影响的最小分配阶数（默认：`3`）。仅当 `kasan.page_alloc.sample` 设置为大于 `1` 的值时适用。
 
-##### 错误报告
+### 错误报告
 
 ```tex
 [160210.815534][    C0] ==================================================================
@@ -227,17 +227,44 @@ KASAN 用来检测**越界**和**释放后使用**，
 [160210.819390][    C0] ==================================================================
 ```
 
-##### 实现细节
+### 实现细节
 
-###### Generic KASAN
+#### Generic KASAN
 
 &#x9;   KASAN的原理是利用额外的内存标记可用内存的状态。这部分额外的内存被称作shadow memory（影子区）。KASAN将1/8的内存用作shadow memory。使用特殊的magic num填充shadow memory，在每一次load/store（load/store检查指令由编译器插入）内存的时候检测对应的shadow memory确定操作是否valid。连续8 bytes内存（8 bytes align）使用1 byte shadow memory标记。如果8 bytes内存都可以访问，则shadow memory的值为0；如果连续N(1 =< N <= 7) bytes可以访问，则shadow memory的值为N；如果8 bytes内存访问都是invalid，则shadow memory的值为负数。
 
 <img src="https://github.com/ysg1011/ysg1011.github.io/blob/main/images/KASAN_shadow_memory.png?raw=true" style="zoom:100%;" />
 
-###### Software Tag-Based KASAN
+编译的时候，在每一次memory access前编译器会帮我们插入``__asan_load##size()`` 或者``__asan_store##size()`` 函数调用（size是访问内存字节的数量）。
 
-软件 KASAN（Software Tag-Based KASAN）使用软件内存标签的方法来检查访问有效性。它目前仅在 arm64 架构上实现。
+```assembly
+0xffffffdb226290cc <dump_tracking+0x94>:        bl      0xffffffdb25288f98 <get_track>
+0xffffffdb226290d0 <dump_tracking+0x98>:        mov     x20, x0
+0xffffffdb226290d4 <dump_tracking+0x9c>:        add     x0, x0, #0x8
+0xffffffdb226290d8 <dump_tracking+0xa0>:        bl      0xffffffdb252b62f8 <__asan_load4>
+0xffffffdb226290dc <dump_tracking+0xa4>:        ldr     w23, [x20, #8]
+0xffffffdb226290e0 <dump_tracking+0xa8>:        mov     x0, x20
+0xffffffdb226290e4 <dump_tracking+0xac>:        bl      0xffffffdb252b6440 <__asan_load8>
+0xffffffdb226290e8 <dump_tracking+0xb0>:        ldr     x8, [x20]
+
+crash> depot_stack_handle_t
+typedef unsigned int depot_stack_handle_t;
+SIZE: 4
+
+handle = READ_ONCE(t->handle);	// 读取4字节size
+```
+
+​        这里汇编访问对应结构成员，KASAN 打开情况下会自动插入``__asan_load4`` 函数，函数主要是检测一个地址对应的shadow memory是否允许读取。函数实现在：mm/kasan/generic.c 
+
+KASAN 测试KO：mm/kasan/kasan_test_c.c
+
+[http://www.wowotech.net/memory_management/424.html]: 	"KASAN实现原理"
+
+
+
+#### Software Tag-Based KASAN
+
+&#x9;   软件 KASAN（Software Tag-Based KASAN）使用软件内存标签的方法来检查访问有效性。它目前仅在 arm64 架构上实现。
 
 软件 KASAN 利用 arm64 CPU 的顶部字节忽略（Top Byte Ignore, TBI）特性，在内核指针的顶部字节中存储指针标签。它使用影子内存来存储与每个 16字节内存单元相关联的内存标签（因此，它将内核内存的 1/16 专用于影子内存）。
 
@@ -247,9 +274,9 @@ KASAN 用来检测**越界**和**释放后使用**，
 
 软件 KASAN 使用 0xFF 作为匹配所有指针的标签（通过带有 0xFF 指针标签的指针进行的访问不会被检查）。值 0xFE 当前被保留用于标记已释放的内存区域。
 
-###### Hardware Tag-Based KASAN
+#### Hardware Tag-Based KASAN
 
-硬件 KASAN（Hardware Tag-Based KASAN）在概念上与软件模式相似，但使用硬件内存标签支持而不是编译器检测和影子内存。
+&#x9;   硬件 KASAN（Hardware Tag-Based KASAN）在概念上与软件模式相似，但使用硬件内存标签支持而不是编译器检测和影子内存。
 
 硬件 KASAN 目前仅在 arm64 架构上实现，基于在 ARMv8.5 指令集架构中引入的 arm64 内存标签扩展（Memory Tagging Extension, MTE）和顶部字节忽略（TBI）。
 
