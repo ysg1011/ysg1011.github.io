@@ -158,47 +158,66 @@
             text-transform: uppercase;
             padding: 0 8px;
         }
-        .folder {
-            margin-bottom: 8px;
-        }
-        .folder-header {
+
+        /* 树形目录 */
+        :root { --tree-indent: 16px; --tree-leaf-extra: 20px; }
+        .tree-node { position: relative; }
+        .tree-branch {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 8px;
-            color: #58a6ff;
-            font-size: 13px;
+            gap: 4px;
+            padding: 5px 8px;
             cursor: pointer;
             border-radius: 4px;
-        }
-        .folder-header:hover {
-            background: #30363d;
-        }
-        .folder-files {
-            padding-left: 8px;
-        }
-        .folder-files.collapsed {
-            display: none;
-        }
-        .file-link {
-            display: block;
-            padding: 6px 12px;
             color: #c9d1d9;
-            text-decoration: none;
-            border-radius: 4px;
             font-size: 13px;
-            margin: 2px 0;
-            cursor: pointer;
+            user-select: none;
+            min-height: 32px;
+        }
+        .tree-branch:hover { background: #30363d; }
+        .tree-arrow {
+            color: #8b949e;
+            font-size: 10px;
+            width: 14px;
+            text-align: center;
+            flex-shrink: 0;
+            transition: transform 0.15s;
+        }
+        .tree-icon { flex-shrink: 0; font-size: 14px; }
+        .tree-label {
+            flex: 1;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        .file-link:hover {
-            background: #30363d;
+        .tree-count {
+            font-size: 11px;
+            color: #8b949e;
+            background: #21262d;
+            padding: 0 6px;
+            border-radius: 10px;
+            flex-shrink: 0;
         }
-        .file-link.active {
-            background: #1f6feb;
-            color: white;
+        .tree-children { }
+        .tree-children.collapsed { display: none; }
+        .tree-leaf {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            color: #c9d1d9;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 4px;
+            overflow: hidden;
+            min-height: 32px;
+        }
+        .tree-leaf:hover { background: #30363d; }
+        .tree-leaf.active { background: #1f6feb; color: white; }
+        .tree-leaf .tree-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         /* 右侧内容 */
         .main {
@@ -238,37 +257,43 @@
         /* Markdown 渲染样式 */
         .markdown-body {
             color: #c9d1d9;
-            line-height: 1.7;
-            font-size: 14px;
+            line-height: 1.8;
+            font-size: 15px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .markdown-body > p {
-            margin: 14px 0;
+            margin: 12px 0;
         }
         .markdown-body h1, .markdown-body h2, .markdown-body h3,
         .markdown-body h4, .markdown-body h5, .markdown-body h6 {
             color: #f0f6fc;
-            margin: 24px 0 12px;
+            margin: 28px 0 12px;
             font-weight: 600;
             line-height: 1.4;
         }
-        .markdown-body h1 { font-size: 1.8em; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
-        .markdown-body h2 { font-size: 1.5em; border-bottom: 1px solid #30363d; padding-bottom: 6px; }
-        .markdown-body h3 { font-size: 1.25em; }
-        .markdown-body h4 { font-size: 1.1em; }
+        .markdown-body h1 { font-size: 1.7em; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
+        .markdown-body h2 { font-size: 1.4em; border-bottom: 1px solid #30363d; padding-bottom: 6px; }
+        .markdown-body h3 { font-size: 1.2em; }
+        .markdown-body h4 { font-size: 1.05em; }
         .markdown-body > h1:first-child,
         .markdown-body > h2:first-child,
         .markdown-body > h3:first-child {
             margin-top: 0;
         }
-        .markdown-body a { color: #58a6ff; text-decoration: none; }
+        .markdown-body a {
+            color: #58a6ff;
+            text-decoration: none;
+            word-break: break-all;
+        }
         .markdown-body a:hover { text-decoration: underline; }
-        .markdown-body ul, .markdown-body ol { margin: 12px 0; padding-left: 24px; }
-        .markdown-body li { margin: 6px 0; }
+        .markdown-body ul, .markdown-body ol { margin: 10px 0; padding-left: 24px; }
+        .markdown-body li { margin: 4px 0; }
         .markdown-body li > ul, .markdown-body li > ol { margin: 4px 0; }
         .markdown-body blockquote {
             border-left: 4px solid #238636;
-            padding: 8px 16px;
-            margin: 16px 0;
+            padding: 10px 16px;
+            margin: 14px 0;
             color: #8b949e;
             background: rgba(35, 134, 54, 0.1);
             border-radius: 0 6px 6px 0;
@@ -276,7 +301,7 @@
         .markdown-body blockquote p { margin: 0; }
         .markdown-body table {
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 14px 0;
             display: block;
             overflow-x: auto;
             max-width: 100%;
@@ -284,7 +309,7 @@
         }
         .markdown-body th, .markdown-body td {
             border: 1px solid #30363d;
-            padding: 10px 14px;
+            padding: 8px 12px;
             text-align: left;
         }
         .markdown-body th {
@@ -296,12 +321,12 @@
         .markdown-body hr {
             border: none;
             border-top: 1px solid #30363d;
-            margin: 24px 0;
+            margin: 20px 0;
         }
         .markdown-body img {
             max-width: 100%;
             border-radius: 6px;
-            margin: 12px 0;
+            margin: 10px 0;
         }
         .markdown-body strong { color: #f0f6fc; font-weight: 600; }
         .markdown-body em { color: #c9d1d9; }
@@ -309,22 +334,24 @@
             background: rgba(110, 118, 129, 0.2);
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.9em;
+            font-size: 0.88em;
             font-family: 'SF Mono', Consolas, monospace;
+            word-break: break-all;
         }
         .markdown-body pre {
             background: #0d1117;
             border: 1px solid #30363d;
             border-radius: 6px;
-            padding: 16px;
+            padding: 14px;
             overflow-x: auto;
-            margin: 16px 0;
+            margin: 14px 0;
         }
         .markdown-body pre code {
             background: none;
             padding: 0;
             font-size: 13px;
-            line-height: 1.5;
+            line-height: 1.6;
+            word-break: normal;
         }
 
         /* 代码高亮 */
@@ -355,6 +382,7 @@
 
         /* 响应式 - 平板及以下 */
         @media (max-width: 768px) {
+            :root { --tree-indent: 12px; --tree-leaf-extra: 14px; }
             .menu-toggle {
                 display: block;
             }
@@ -414,10 +442,21 @@
                 padding: 6px 8px;
                 white-space: nowrap;
             }
+            .tree-branch {
+                font-size: 13px;
+                padding: 6px 6px;
+            }
+            .tree-leaf {
+                font-size: 13px;
+                padding: 5px 6px;
+                min-height: 36px;
+            }
+            .tree-label { font-size: 13px; }
         }
 
         /* 响应式 - 手机 */
         @media (max-width: 480px) {
+            :root { --tree-indent: 8px; --tree-leaf-extra: 10px; }
             .header h1 {
                 font-size: 1rem;
                 margin-bottom: 0.2rem;
@@ -504,13 +543,16 @@
                 border-radius: 4px;
                 overflow-x: auto;
             }
-            .folder-header {
+            .tree-branch {
                 font-size: 12px;
                 padding: 5px 6px;
             }
-            .file-link {
+            .tree-leaf {
                 font-size: 12px;
-                padding: 4px 8px;
+                padding: 4px 4px;
+                min-height: 36px;
+            }
+            .tree-leaf .tree-label {
                 word-break: break-all;
             }
             .markdown-body table {
@@ -524,6 +566,7 @@
 
         /* 响应式 - 极小的手机屏幕 */
         @media (max-width: 360px) {
+            :root { --tree-indent: 6px; --tree-leaf-extra: 8px; }
             .header h1 {
                 font-size: 0.9rem;
             }
@@ -540,6 +583,16 @@
                 font-size: 10px;
                 padding: 6px;
             }
+            .tree-branch {
+                font-size: 12px;
+                padding: 5px 4px;
+            }
+            .tree-leaf {
+                font-size: 12px;
+                padding: 4px 4px;
+                min-height: 32px;
+            }
+            .tree-label { font-size: 12px; }
         }
     </style>
 </head>
@@ -894,27 +947,45 @@
             return root;
         }
 
+        // 统计目录下的文件总数
+        function countFiles(node) {
+            let n = node.files.length;
+            for (const k of Object.keys(node.folders)) {
+                n += countFiles(node.folders[k]);
+            }
+            return n;
+        }
+
         // 递归渲染目录树节点
         function renderTreeNode(node, depth) {
             let html = '';
-            const padding = depth > 0 ? 'padding-left: ' + (depth * 8) + 'px' : '';
+            const indent = depth;
 
             // 渲染子目录
             const folderNames = Object.keys(node.folders).sort();
             for (const name of folderNames) {
-                html += `<div class="folder" style="${padding}">`;
-                html += `<div class="folder-header" onclick="toggleFolder(this)">📁 ${name} <span style="color:#8b949e;font-size:11px">▼</span></div>`;
-                html += `<div class="folder-files">`;
-                html += renderTreeNode(node.folders[name], depth + 1);
+                const child = node.folders[name];
+                const cnt = countFiles(child);
+                html += `<div class="tree-node" style="padding-left:calc(${indent} * var(--tree-indent))">`;
+                html += `<div class="tree-branch" onclick="toggleFolder(this)">`;
+                html += `<span class="tree-arrow">▶</span>`;
+                html += `<span class="tree-icon"> </span>`;
+                html += `<span class="tree-label">${name}</span>`;
+                html += `<span class="tree-count">${cnt}</span>`;
+                html += `</div>`;
+                html += `<div class="tree-children collapsed">`;
+                html += renderTreeNode(child, depth + 1);
                 html += `</div></div>`;
             }
 
             // 渲染文件
-            for (let i = 0; i < node.files.length; i++) {
-                const { name, file } = node.files[i];
+            for (const { name, file } of node.files) {
                 const icon = getFileIcon(name);
                 const idx = FILES.indexOf(file);
-                html += `<div class="file-link" style="${padding}" data-index="${idx}">${icon} ${name}</div>`;
+                html += `<div class="tree-leaf" style="padding-left:calc(${indent} * var(--tree-indent) + var(--tree-leaf-extra))" data-index="${idx}">`;
+                html += `<span class="tree-icon">${icon}</span>`;
+                html += `<span class="tree-label">${name}</span>`;
+                html += `</div>`;
             }
 
             return html;
@@ -937,8 +1008,8 @@
 
             list.innerHTML = renderTreeNode(tree, 0);
 
-            // 绑定点击事件
-            list.querySelectorAll('.file-link').forEach(el => {
+            // 绑定文件点击事件
+            list.querySelectorAll('.tree-leaf').forEach(el => {
                 el.addEventListener('click', function() {
                     debouncedShowFile(parseInt(this.dataset.index));
                 });
@@ -946,10 +1017,10 @@
         }
 
         function toggleFolder(el) {
-            const files = el.nextElementSibling;
-            files.classList.toggle('collapsed');
-            const arrow = el.querySelector('span');
-            arrow.textContent = files.classList.contains('collapsed') ? '▶' : '▼';
+            const children = el.nextElementSibling;
+            const arrow = el.querySelector('.tree-arrow');
+            children.classList.toggle('collapsed');
+            arrow.textContent = children.classList.contains('collapsed') ? '▶' : '▼';
         }
 
         // 设置面板
@@ -985,7 +1056,7 @@
 
         // 点击文件后自动关闭侧边栏（移动端）- 包装 showFile
         const originalShowFile = showFile;
-        showFile = async function(index) {
+        window.showFile = async function(index) {
             await originalShowFile(index);
             if (window.innerWidth <= 768) {
                 toggleSidebar();
@@ -1017,10 +1088,25 @@
             }
         });
 
+        // 点击侧边栏空白区域关闭侧边栏
+        document.getElementById('sidebar').addEventListener('click', function(e) {
+            if (e.target === this || e.target === document.getElementById('file-list')) {
+                toggleSidebar();
+            }
+        });
+
+        // 点击正文区域关闭侧边栏
+        document.querySelector('.main').addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('open')) {
+                toggleSidebar();
+            }
+        });
+
         // 显示指定文件
         async function showFile(index) {
             // 更新选中状态
-            document.querySelectorAll('.file-link').forEach(el => {
+            document.querySelectorAll('.tree-leaf').forEach(el => {
                 el.classList.toggle('active', parseInt(el.dataset.index) === index);
             });
 
